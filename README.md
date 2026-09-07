@@ -1,6 +1,18 @@
 # Kalkan
 
-Kalkan, şüpheli mesaj, bağlantı ve ekran görüntülerindeki dolandırıcılık risklerini sade Türkçeyle açıklayan bir web uygulaması prototipidir.
+<p align="center">
+  <a href="https://github.com/Nurettin-Erdogan/kalkan/actions/workflows/ci.yml"><img src="https://github.com/Nurettin-Erdogan/kalkan/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI durumu"></a>
+</p>
+
+Kalkan, şüpheli mesaj, bağlantı ve ekran görüntülerindeki dolandırıcılık risklerini sade Türkçeyle açıklayan bir web uygulamasıdır. Analiz tarayıcıda çalışır; içeriği sunucuya göndermez.
+
+## Portföy özeti
+
+| | |
+| --- | --- |
+| **Problem** | Kullanıcıların sahte kargo, banka ve kurum mesajlarını ayırt etmekte zorlanması |
+| **Çözüm** | Dil, bağlantı yapısı ve taklit alan adlarını puanlayan açıklanabilir risk analizi |
+| **Doğrulama** | Birim testler, TypeScript, lint ve üretim derlemesi GitHub Actions’ta koşar |
 
 ## Özellikler
 
@@ -13,15 +25,12 @@ Kalkan, şüpheli mesaj, bağlantı ve ekran görüntülerindeki dolandırıcıl
 
 ## Test ve CI
 
-Risk analizi birim testleri tarayıcı olmadan çalışır:
-
 ```bash
 npm test
 npm run typecheck
 npm run lint
+npm run build
 ```
-
-Push ve pull request'lerde GitHub Actions aynı kontrolleri çalıştırır.
 
 ## Yerel geliştirme
 
@@ -31,12 +40,6 @@ npm run dev
 ```
 
 Uygulama varsayılan olarak `http://localhost:3000` adresinde açılır.
-
-## Üretim derlemesi
-
-```bash
-npm run build
-```
 
 ## Önemli not
 
