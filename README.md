@@ -13,7 +13,7 @@ Kalkan, şüpheli mesaj, bağlantı ve ekran görüntülerindeki dolandırıcıl
 <p align="center">
   <a href="https://kalkan.vercel.app"><strong>Canlı demoyu aç →</strong></a>
   &nbsp;·&nbsp;
-  <a href="#60-saniyelik-demo"><strong>60 saniyelik demo</strong></a>
+  <a href="docs/demo-guide.md"><strong>3 dakikalık demo</strong></a>
 </p>
 
 ## Portföy özeti
@@ -24,12 +24,11 @@ Kalkan, şüpheli mesaj, bağlantı ve ekran görüntülerindeki dolandırıcıl
 | **Çözüm** | Dil, bağlantı yapısı ve taklit alan adlarını puanlayan açıklanabilir risk analizi |
 | **Doğrulama** | Birim testler, TypeScript, lint ve üretim derlemesi GitHub Actions’ta koşar |
 
-## 60 saniyelik demo
+## 3 dakikalık demo
 
-1. Canlı demoyu aç.
-2. Alttaki örneklerden **Sahte kargo mesajı**na tıkla — analiz otomatik çalışır.
-3. Risk puanı, bulgular ve önerilen güvenli adımları göster.
-4. İstersen ekran görüntüsü yükleyip OCR ile aynı akışı tekrarla.
+Görüşme akışı, olası sorular ve ürün sınırları: [docs/demo-guide.md](docs/demo-guide.md).
+
+Kısa tur: canlı demoyu açın → **Sahte kargo mesajı** örneğine tıklayın → puan, bulgular ve önerilen adımı okuyun. Analiz tarayıcıda kalır.
 
 ## Özellikler
 
