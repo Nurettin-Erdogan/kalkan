@@ -6,7 +6,7 @@ Güvenlik düzeltmeleri `main` dalına uygulanır.
 
 ## Güvenlik açığı bildirme
 
-Herkese açık issue açmayın. GitHub Security Advisory kullanın veya `enurettin89@gmail.com` adresine yazın.
+Herkese açık issue açmayın. Güvenlik açığını [GitHub Security Advisories](https://github.com/Nurettin-Erdogan/kalkan/security/advisories/new) üzerinden bildirin.
 
 ## Kapsam
 

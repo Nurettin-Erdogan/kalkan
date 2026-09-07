@@ -9,13 +9,13 @@ export const metadata: Metadata = {
     description: 'Şüphe duyduysan, önce Kalkan’a sor.',
     type: 'website',
     locale: 'tr_TR',
-    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'Kalkan dolandırıcılık risk analizi' }],
+    images: [{ url: '/og.jpg', width: 1200, height: 630, alt: 'Kalkan dolandırıcılık risk analizi' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Kalkan',
     description: 'Şüphe duyduysan, önce Kalkan’a sor.',
-    images: ['/og.png'],
+    images: ['/og.jpg'],
   },
 };
 

@@ -47,15 +47,20 @@ export default function Home() {
   }
 
   async function copyResult() {
-    await navigator.clipboard.writeText(resultCopy);
-    setCopied(true);
+    try {
+      await navigator.clipboard.writeText(resultCopy);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
   }
 
   function loadExample(text: string) {
     setContent(text);
-    setAnalysis(null);
     setOcrStatus('');
     setImageName('');
+    setCopied(false);
+    setAnalysis(analyzeContent(text));
   }
 
   async function readScreenshot(event: ChangeEvent<HTMLInputElement>) {
