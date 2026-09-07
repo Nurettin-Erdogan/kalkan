@@ -11,6 +11,18 @@ Kalkan, şüpheli mesaj, bağlantı ve ekran görüntülerindeki dolandırıcıl
 - Güvenli sonraki adım önerileri
 - Tamamen tarayıcı içinde çalışan analiz
 
+## Test ve CI
+
+Risk analizi birim testleri tarayıcı olmadan çalışır:
+
+```bash
+npm test
+npm run typecheck
+npm run lint
+```
+
+Push ve pull request'lerde GitHub Actions aynı kontrolleri çalıştırır.
+
 ## Yerel geliştirme
 
 ```bash

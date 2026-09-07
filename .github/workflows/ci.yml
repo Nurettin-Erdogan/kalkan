@@ -1,0 +1,34 @@
+name: Kalkan CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu al
+        uses: actions/checkout@v6
+
+      - name: Node.js kur
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Bağımlılıkları kur
+        run: npm ci
+
+      - name: Analiz birim testlerini çalıştır
+        run: npm test
+
+      - name: TypeScript sözleşmesini doğrula
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
