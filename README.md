@@ -10,6 +10,8 @@
 
 Kalkan, şüpheli mesaj, bağlantı ve ekran görüntülerindeki dolandırıcılık risklerini sade Türkçeyle açıklayan bir web uygulamasıdır. Analiz tarayıcıda çalışır; içeriği sunucuya göndermez.
 
+**Ne değildir?** Kalkan bir LLM sohbet botu değildir; kural tabanlı, açıklanabilir bir risk asistanıdır. [Ajan Kalkanı](https://github.com/Nurettin-Erdogan/ajan-kalkani) AI ajanlarının *tool çağrılarını* yetkilendirir — bu proje ise kullanıcıya gelen *scam / phishing* içerğini puanlar. İkisi farklı katmanlardır.
+
 <p align="center">
   <a href="https://nurettin-erdogan.github.io/kalkan"><strong>Canlı demoyu aç →</strong></a>
   &nbsp;·&nbsp;
@@ -21,17 +23,18 @@ Kalkan, şüpheli mesaj, bağlantı ve ekran görüntülerindeki dolandırıcıl
 | | |
 | --- | --- |
 | **Problem** | Kullanıcıların sahte kargo, banka ve kurum mesajlarını ayırt etmekte zorlanması |
-| **Çözüm** | Dil, bağlantı yapısı ve taklit alan adlarını puanlayan açıklanabilir risk analizi |
-| **Doğrulama** | Birim testler, TypeScript, lint ve üretim derlemesi GitHub Actions’ta koşar |
+| **Çözüm** | Dil, bağlantı yapısı, taklit / lookalike alan adları ve şüpheli destek hatlarını puanlayan açıklanabilir risk analizi |
+| **Doğrulama** | Fixture’lı birim testler, TypeScript, lint ve üretim derlemesi GitHub Actions’ta koşar |
 
-Canlı sitede **Sahte kargo mesajı** örneğini açın; puan, bulgular ve önerilen adım tarayıcıda üretilir. Ayrıntılı tur: [docs/demo-guide.md](docs/demo-guide.md).
+Canlı sitede **Sahte kargo mesajı** örneğini açın; puan, öncelikli bulgular ve önerilen adım tarayıcıda üretilir. Ayrıntılı tur: [docs/demo-guide.md](docs/demo-guide.md).
 
 ## Özellikler
 
-- Mesaj ve bağlantı analizi
+- Mesaj ve bağlantı analizi (kural tabanlı, LLM yok)
 - Türkçe ekran görüntüsü OCR desteği
-- Taklit alan adı ve şüpheli bağlantı tespiti
-- Açıklanabilir risk puanı
+- Taklit alan adı + lookalike (benzer yazım) tespiti
+- Şüpheli 0850 / destek hattı kalıpları
+- Açıklanabilir risk puanı (önce kritik bulgular)
 - Güvenli sonraki adım önerileri
 - Tamamen tarayıcı içinde çalışan analiz
 

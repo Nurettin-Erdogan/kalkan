@@ -13,10 +13,33 @@ const examples = [
     text: 'Hesabınız güvenlik nedeniyle askıya alınacaktır. Mobil bankacılık şifrenizi doğrulamak için acilen https://isbank-guvenlik.info adresine giriş yapın.',
   },
   {
+    label: 'Lookalike alan adı',
+    text: 'Mobil onay için hemen https://garnianti.com/tr/giris adresine girin ve şifrenizi doğrulayın.',
+  },
+  {
     label: 'Normal mesaj',
     text: 'Merhaba, yarın saat 14.00 için oluşturduğunuz servis randevusunu hatırlatmak isteriz. İyi günler.',
   },
 ];
+
+function primaryAction(level: Analysis['level']) {
+  if (level === 'high') {
+    return {
+      title: 'Şimdi yapman gereken tek şey',
+      body: 'Bağlantıyı açma. Numarayı ara. Kurumu senin bildiğin resmî uygulamadan veya web adresinden kendin kontrol et.',
+    };
+  }
+  if (level === 'medium') {
+    return {
+      title: 'İşlem yapmadan önce doğrula',
+      body: 'Bağlantıya tıklama. Kurumun resmi sitesini tarayıcıya kendin yazarak veya mobil uygulamasından kontrol et.',
+    };
+  }
+  return {
+    title: 'Belirgin tehlike az',
+    body: 'Yine de şüphen varsa işlem yapma. Bu sonuç güvenlik garantisi değildir.',
+  };
+}
 
 export default function Home() {
   const [content, setContent] = useState('');
@@ -104,6 +127,8 @@ export default function Home() {
   }
 
   const levelText = analysis?.level === 'high' ? 'Yüksek risk' : analysis?.level === 'medium' ? 'Şüpheli' : 'Düşük risk';
+  const action = analysis ? primaryAction(analysis.level) : null;
+  const rankedFindings = analysis?.findings ?? [];
   const recommendedActions = analysis?.level === 'high'
     ? [
         'Mesajdaki bağlantıyı açma, numarayı arama ve ödeme yapma.',
@@ -189,7 +214,7 @@ export default function Home() {
         {examples.map((example) => <button key={example.label} type="button" onClick={() => loadExample(example.text)}>{example.label} <b>↗</b></button>)}
       </section>
 
-      {analysis && (
+      {analysis && action && (
         <section className={`result result-${analysis.level}`} aria-live="polite">
           <div className="result-score">
             <div className="score-ring" style={{ '--score': `${analysis.score * 3.6}deg` } as React.CSSProperties}>
@@ -201,12 +226,29 @@ export default function Home() {
               <p>{analysis.level === 'high' ? 'Bu içerikle işlem yapma. Bağlantıyı açma ve bilgi paylaşma.' : analysis.level === 'medium' ? 'İşlem yapmadan önce kurumu kendi resmî kanalından doğrula.' : 'Belirgin tehlike az; bu sonuç güvenlik garantisi değildir.'}</p>
             </div>
           </div>
+          <div className={`primary-action primary-action-${analysis.level}`} role="status">
+            <span className="step">!</span>
+            <div>
+              <strong>{action.title}</strong>
+              <p>{action.body}</p>
+            </div>
+          </div>
           <div className="findings">
-            <h3>Neden bu sonucu verdi?</h3>
-            {analysis.findings.map((finding) => (
+            <h3>Neden bu sonucu verdi? <small>Önce en kritik işaretler</small></h3>
+            {rankedFindings.map((finding) => (
               <article key={finding.title} className={finding.kind}>
                 <span aria-hidden="true">{finding.kind === 'positive' ? '✓' : finding.kind === 'danger' ? '!' : '?'}</span>
-                <div><strong>{finding.title}</strong><p>{finding.detail}</p></div>
+                <div>
+                  <strong>{finding.title}</strong>
+                  <p>{finding.detail}</p>
+                  {finding.kind !== 'positive' && (
+                    <p className="finding-example">
+                      {finding.kind === 'danger'
+                        ? 'Örnek: Bu işaret tek başına bile işlemi durdurmak için yeterli olabilir.'
+                        : 'Örnek: Diğer işaretlerle birlikte riski yükseltir.'}
+                    </p>
+                  )}
+                </div>
                 {finding.points > 0 && <b>+{finding.points}</b>}
               </article>
             ))}
@@ -214,7 +256,7 @@ export default function Home() {
           <div className="safe-actions">
             <div><span className="step">02</span><h3>Şimdi ne yapmalısın?</h3></div>
             <ul>
-              {recommendedActions.map((action) => <li key={action}>{action}</li>)}
+              {recommendedActions.map((item) => <li key={item}>{item}</li>)}
             </ul>
             <button type="button" onClick={copyResult}>{copied ? 'Sonuç kopyalandı ✓' : 'Sonucu ailemle paylaş'}</button>
           </div>
@@ -225,7 +267,7 @@ export default function Home() {
         <div><span className="overline">NASIL ÇALIŞIR?</span><h2>Tek bir işarete değil,<br />bütün resme bakar.</h2></div>
         <div className="info-grid">
           <article><span>01</span><h3>Mesajın dili</h3><p>Aciliyet, korkutma, ödül ve hassas bilgi taleplerini arar.</p></article>
-          <article><span>02</span><h3>Bağlantının yapısı</h3><p>Taklit alan adlarını, şüpheli uzantıları ve gizlenmiş hedefleri inceler.</p></article>
+          <article><span>02</span><h3>Bağlantının yapısı</h3><p>Taklit ve lookalike alan adlarını, şüpheli uzantıları ve gizlenmiş hedefleri inceler.</p></article>
           <article><span>03</span><h3>Açıklanabilir sonuç</h3><p>Risk puanını hangi işaretlerin yükselttiğini tek tek gösterir.</p></article>
         </div>
       </section>

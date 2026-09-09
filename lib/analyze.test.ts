@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { analyzeContent } from './analyze.ts';
+import { scamFixtures } from './fixtures/scam-cases.ts';
 
 test('sakin bir randevu mesajını düşük risk sayar', () => {
   const result = analyzeContent('Merhaba, yarın saat 14.00 için oluşturduğunuz servis randevusunu hatırlatmak isteriz. İyi günler.');
@@ -106,3 +107,55 @@ test('e-posta adresinin alan adını bağlantı gibi değerlendirmez', () => {
   const result = analyzeContent('Sorularınız için destek@ptt.gov.tr adresine yazabilirsiniz.');
   assert.equal(result.links.length, 0);
 });
+
+test('lookalike garanti yazımını yakalar', () => {
+  const result = analyzeContent('Onay: https://garnianti.com/giris');
+  assert.ok(result.findings.some((item) => item.title === 'Benzer alan adı (lookalike)'));
+});
+
+test('bulgular tehlike önceliğine göre sıralanır', () => {
+  const result = analyzeContent(
+    'Hesabınız askıya alınacak. Acilen şifrenizi girin: http://ptt-odeme.xyz/x',
+  );
+  const kinds = result.findings.map((item) => item.kind);
+  const firstDanger = kinds.indexOf('danger');
+  const firstPositive = kinds.indexOf('positive');
+  assert.ok(firstDanger !== -1);
+  if (firstPositive !== -1) assert.ok(firstDanger < firstPositive);
+  for (let i = 1; i < result.findings.length; i += 1) {
+    const prev = result.findings[i - 1];
+    const curr = result.findings[i];
+    const rank = { danger: 0, warning: 1, positive: 2 } as const;
+    assert.ok(rank[prev.kind] <= rank[curr.kind]);
+  }
+});
+
+for (const fixture of scamFixtures) {
+  test(`fixture:${fixture.id} (${fixture.category})`, () => {
+    const result = analyzeContent(fixture.text);
+    const titles = result.findings.map((item) => item.title);
+
+    if (fixture.expectLevel) {
+      assert.equal(
+        result.level,
+        fixture.expectLevel,
+        `${fixture.id}: level=${result.level} score=${result.score} titles=${titles.join(' | ')}`,
+      );
+    }
+
+    if (fixture.expectMinScore !== undefined) {
+      assert.ok(
+        result.score >= fixture.expectMinScore,
+        `${fixture.id}: score ${result.score} < ${fixture.expectMinScore}; titles=${titles.join(' | ')}`,
+      );
+    }
+
+    for (const title of fixture.expectTitles) {
+      assert.ok(titles.includes(title), `${fixture.id}: missing "${title}"; got: ${titles.join(' | ')}`);
+    }
+
+    for (const title of fixture.rejectTitles ?? []) {
+      assert.ok(!titles.includes(title), `${fixture.id}: unexpected "${title}"`);
+    }
+  });
+}
