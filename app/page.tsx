@@ -82,7 +82,7 @@ export default function Home() {
     try {
       const { createWorker } = await import('tesseract.js');
       const worker = await createWorker('tur', 1, {
-        langPath: '/tessdata',
+        langPath: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/tessdata`,
         logger: (message) => {
           if (message.status === 'recognizing text') {
             setOcrStatus(`Metin okunuyor… %${Math.round((message.progress ?? 0) * 100)}`);

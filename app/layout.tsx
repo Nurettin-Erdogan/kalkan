@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kalkan.enurettin89.chatgpt.site';
+const siteBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'Kalkan — Şüpheli mesaj ve bağlantı analizi',
   description: 'Mesaj ve bağlantılardaki dolandırıcılık risklerini sade Türkçeyle açıklar.',
   openGraph: {
@@ -9,13 +13,13 @@ export const metadata: Metadata = {
     description: 'Şüphe duyduysan, önce Kalkan’a sor.',
     type: 'website',
     locale: 'tr_TR',
-    images: [{ url: '/og.jpg', width: 1200, height: 630, alt: 'Kalkan dolandırıcılık risk analizi' }],
+    images: [{ url: `${siteBasePath}/og.jpg`, width: 1200, height: 630, alt: 'Kalkan dolandırıcılık risk analizi' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Kalkan',
     description: 'Şüphe duyduysan, önce Kalkan’a sor.',
-    images: ['/og.jpg'],
+    images: [`${siteBasePath}/og.jpg`],
   },
 };
 

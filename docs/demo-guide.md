@@ -1,6 +1,6 @@
 # Canlı tur
 
-[Kalkan](https://kalkan.enurettin89.chatgpt.site) şüpheli mesaj ve bağlantıdaki dolandırıcılık sinyallerini tarayıcıda puanlar. İçerik sunucuya gitmez. Kesin güvenlik kararı değildir.
+[Kalkan](https://nurettin-erdogan.github.io/kalkan) şüpheli mesaj ve bağlantıdaki dolandırıcılık sinyallerini tarayıcıda puanlar. İçerik sunucuya gitmez. Kesin güvenlik kararı değildir.
 
 Gerçek kişisel mesaj yapıştırmayın; örnekleri kullanın.
 

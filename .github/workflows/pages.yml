@@ -1,0 +1,53 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu al
+        uses: actions/checkout@v6
+
+      - name: Node.js kur
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Pages'i hazırla
+        uses: actions/configure-pages@v5
+
+      - name: Bağımlılıkları kur
+        run: npm ci
+
+      - name: Statik siteyi oluştur
+        run: npx next build
+        env:
+          GITHUB_PAGES: "true"
+          NEXT_PUBLIC_BASE_PATH: /kalkan
+          NEXT_PUBLIC_SITE_URL: https://nurettin-erdogan.github.io
+
+      - name: Yayın paketini yükle
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./out
+
+      - name: GitHub Pages'e yayınla
+        id: deployment
+        uses: actions/deploy-pages@v4

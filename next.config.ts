@@ -1,5 +1,8 @@
 import type { NextConfig } from 'next';
 
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+const githubPagesBasePath = isGitHubPages ? '/kalkan' : '';
+
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
@@ -27,15 +30,21 @@ const securityHeaders = [
   },
 ];
 
-const nextConfig: NextConfig = {
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: securityHeaders,
+const nextConfig: NextConfig = isGitHubPages
+  ? {
+      output: 'export',
+      basePath: githubPagesBasePath,
+      assetPrefix: githubPagesBasePath,
+    }
+  : {
+      async headers() {
+        return [
+          {
+            source: '/:path*',
+            headers: securityHeaders,
+          },
+        ];
       },
-    ];
-  },
-};
+    };
 
 export default nextConfig;
