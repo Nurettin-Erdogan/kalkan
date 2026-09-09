@@ -80,6 +80,7 @@ test('kelimeler arasındaki ek ifadeler olsa da paket iptali tehdidini yakalar',
 test('kullanıcı bilgisi içeren yanıltıcı bağlantıyı yakalar', () => {
   const result = analyzeContent('Giriş: https://turkiye.gov.tr@evil.example/login');
   assert.ok(result.findings.some((item) => item.title === 'Yanıltıcı bağlantı biçimi'));
+  assert.equal(result.level, 'medium');
 });
 
 test('resmî alan adının alt alanına izin verir', () => {

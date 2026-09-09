@@ -115,6 +115,7 @@ export function analyzeContent(input: string): Analysis {
 
   const cleanFindings = uniqueFindings(findings);
   const score = Math.min(100, cleanFindings.reduce((sum, finding) => sum + finding.points, 0));
-  const level: Analysis['level'] = score >= 65 ? 'high' : score >= 30 ? 'medium' : 'low';
+  const hasDangerSignal = cleanFindings.some((finding) => finding.kind === 'danger' && finding.points > 0);
+  const level: Analysis['level'] = score >= 65 ? 'high' : score >= 30 || hasDangerSignal ? 'medium' : 'low';
   return { score, level, findings: cleanFindings, links };
 }

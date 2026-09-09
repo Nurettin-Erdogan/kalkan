@@ -104,6 +104,25 @@ export default function Home() {
   }
 
   const levelText = analysis?.level === 'high' ? 'Yüksek risk' : analysis?.level === 'medium' ? 'Şüpheli' : 'Düşük risk';
+  const recommendedActions = analysis?.level === 'high'
+    ? [
+        'Mesajdaki bağlantıyı açma, numarayı arama ve ödeme yapma.',
+        'Kuruma, adresini kendin yazarak veya resmî uygulamasından ulaş.',
+        'Şifre, kart bilgisi ve SMS doğrulama kodunu kimseyle paylaşma.',
+      ]
+    : analysis?.level === 'medium'
+      ? [
+          'İşlem yapmadan önce göndereni kurumun resmî kanalından doğrula.',
+          'Bağlantının görünen adına değil, gerçek alan adına dikkat et.',
+          'Şüphe devam ediyorsa bağlantıyı açma ve kişisel bilgi paylaşma.',
+        ]
+      : [
+          'Belirgin bir risk işareti bulunmadı; bu sonuç güvenlik garantisi değildir.',
+          analysis?.links.length
+            ? 'Bağlantıyı açmadan önce alan adının beklediğin kuruma ait olduğunu kontrol et.'
+            : 'Mesajın beklediğin işlem veya görüşmeyle uyuştuğunu kontrol et.',
+          'Beklenmeyen bir ödeme veya bilgi talebi gelirse yeniden analiz et.',
+        ];
 
   return (
     <main>
@@ -195,9 +214,7 @@ export default function Home() {
           <div className="safe-actions">
             <div><span className="step">02</span><h3>Şimdi ne yapmalısın?</h3></div>
             <ul>
-              <li>Mesajdaki bağlantıyı açma ve numarayı arama.</li>
-              <li>Kurumun adresini kendin yazarak veya resmî uygulamasından kontrol et.</li>
-              <li>Şifre, kart bilgisi ve SMS doğrulama kodunu kimseyle paylaşma.</li>
+              {recommendedActions.map((action) => <li key={action}>{action}</li>)}
             </ul>
             <button type="button" onClick={copyResult}>{copied ? 'Sonuç kopyalandı ✓' : 'Sonucu ailemle paylaş'}</button>
           </div>
