@@ -1,6 +1,6 @@
 # Canlı tur
 
-[Kalkan](https://kalkan.vercel.app) şüpheli mesaj ve bağlantıdaki dolandırıcılık sinyallerini tarayıcıda puanlar. İçerik sunucuya gitmez. Kesin güvenlik kararı değildir.
+[Kalkan](https://kalkan.enurettin89.chatgpt.site) şüpheli mesaj ve bağlantıdaki dolandırıcılık sinyallerini tarayıcıda puanlar. İçerik sunucuya gitmez. Kesin güvenlik kararı değildir.
 
 Gerçek kişisel mesaj yapıştırmayın; örnekleri kullanın.
 

@@ -11,7 +11,7 @@
 Kalkan, şüpheli mesaj, bağlantı ve ekran görüntülerindeki dolandırıcılık risklerini sade Türkçeyle açıklayan bir web uygulamasıdır. Analiz tarayıcıda çalışır; içeriği sunucuya göndermez.
 
 <p align="center">
-  <a href="https://kalkan.vercel.app"><strong>Canlı demoyu aç →</strong></a>
+  <a href="https://kalkan.enurettin89.chatgpt.site"><strong>Canlı demoyu aç →</strong></a>
   &nbsp;·&nbsp;
   <a href="docs/demo-guide.md"><strong>Canlı tur</strong></a>
 </p>
