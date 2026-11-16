@@ -5,7 +5,27 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      npm-minor-ve-yama:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+      npm-guvenlik:
+        applies-to: security-updates
+        patterns:
+          - "*"
+    ignore:
+      # wrangler 4, @cloudflare/workers-types 5 ile uyumlu değil (ERESOLVE).
+      - dependency-name: "@cloudflare/workers-types"
+        update-types:
+          - version-update:semver-major
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
