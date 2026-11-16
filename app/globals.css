@@ -46,8 +46,8 @@ label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 9px;
 textarea { width: 100%; min-height: 174px; resize: vertical; border: 1px solid #bdc8c0; border-radius: 13px; outline: 0; padding: 17px 17px 32px; background: #fbfcfa; color: var(--ink); font-size: 14px; line-height: 1.6; transition: border-color .2s, box-shadow .2s; }
 textarea:focus { border-color: var(--green); box-shadow: 0 0 0 4px rgba(13,92,67,.1); }
 textarea::placeholder { color: #9da8a1; }
-.counter { position: absolute; right: 13px; bottom: 11px; color: #9ba69f; font-size: 9px; }
-.input-divider { display: flex; align-items: center; gap: 10px; margin: 12px 0; color: #98a39d; font-size: 9px; font-weight: 750; text-transform: uppercase; }
+.counter { position: absolute; right: 13px; bottom: 11px; color: #5d6a64; font-size: 11px; }
+.input-divider { display: flex; align-items: center; gap: 10px; margin: 12px 0; color: #5d6a64; font-size: 11px; font-weight: 750; text-transform: uppercase; }
 .input-divider::before, .input-divider::after { content: ''; height: 1px; flex: 1; background: #e4e8e4; }
 .upload-button { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; margin: 0; padding: 13px 14px; border: 1px dashed #b9c7be; border-radius: 12px; background: #f7faf6; color: var(--ink); cursor: pointer; letter-spacing: 0; transition: border-color .2s, background .2s; }
 .upload-button:hover { border-color: var(--green); background: #f0f7f1; }
@@ -65,11 +65,11 @@ textarea::placeholder { color: #9da8a1; }
 .analyze-button:hover:not(:disabled) { background: #084b36; transform: translateY(-1px); }
 .analyze-button:disabled { opacity: .45; cursor: not-allowed; }
 .analyze-button:focus-visible, .examples button:focus-visible, .safe-actions button:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
-.privacy-note { margin: 13px 0 0; color: #78857f; text-align: center; font-size: 9px; }
+.privacy-note { margin: 13px 0 0; color: #5d6a64; text-align: center; font-size: 11px; }
 .privacy-note span { color: #44b56f; }
 
 .examples { width: min(1180px, calc(100% - 40px)); margin: -18px auto 76px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 9px; }
-.examples > span { margin-right: 4px; color: #7a8781; font-size: 9px; font-weight: 850; letter-spacing: .12em; }
+.examples > span { margin-right: 4px; color: #5d6a64; font-size: 11px; font-weight: 850; letter-spacing: .12em; }
 .examples button { padding: 8px 11px; border: 1px solid #d1d9d2; border-radius: 999px; background: rgba(255,255,255,.67); color: #4f6159; cursor: pointer; font-size: 10px; font-weight: 720; }
 .examples button:hover { border-color: var(--green); color: var(--green); }
 .examples b { margin-left: 5px; }
@@ -98,7 +98,7 @@ textarea::placeholder { color: #9da8a1; }
 .findings { padding: 28px 30px; }
 .findings h3, .safe-actions h3 { margin: 0; font-size: 15px; letter-spacing: -.02em; }
 .findings h3 small { margin-left: 8px; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: 0; }
-.finding-example { margin-top: 6px !important; color: #7a8781 !important; font-size: 10px !important; }
+.finding-example { margin-top: 6px !important; color: #5d6a64 !important; font-size: 10px !important; }
 .findings article { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; margin-top: 12px; padding: 14px; border-radius: 11px; background: #f6f8f5; }
 .findings article > span { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: #e7ece8; color: var(--muted); font-size: 11px; font-weight: 900; }
 .findings article.danger > span { background: #ffe6e2; color: var(--red); }
