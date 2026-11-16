@@ -16,11 +16,6 @@ updates:
         applies-to: security-updates
         patterns:
           - "*"
-    ignore:
-      # wrangler 4, @cloudflare/workers-types 5 ile uyumlu değil (ERESOLVE).
-      - dependency-name: "@cloudflare/workers-types"
-        update-types:
-          - version-update:semver-major
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
