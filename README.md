@@ -95,6 +95,14 @@ Kalkan'ın temel tasarım kararı, analiz edilen içeriğin mümkün olduğunca 
 
 Bu nedenle uygulama, kullanıcı mesajlarını veya ekran görüntülerini analiz amacıyla kendi backend'ine gönderen klasik bir servis değildir.
 
+### Vaat değil, tarayıcının uyguladığı kural
+
+"Veri cihazdan çıkmaz" ifadesi yalnızca bir tasarım niyeti değil; tarayıcı tarafından zorunlu kılınır ve her commit'te test edilir:
+
+- **Üçüncü taraf kaynak yok.** Tesseract worker'ı, WASM çekirdeği ve Türkçe dil verisi sitenin kendi kaynağından yüklenir ([`scripts/copy-tesseract.mjs`](scripts/copy-tesseract.mjs)); CDN kullanılmaz.
+- **CSP `connect-src 'self'`.** Sayfa kendi kaynağı dışındaki hiçbir sunucuya istek atamaz. GitHub Pages HTTP başlığı eklemeye izin vermediği için politika ayrıca `<meta>` etiketiyle de uygulanır ([`app/layout.tsx`](app/layout.tsx)).
+- **Uçtan uca gizlilik testi.** [`scripts/privacy-check.mjs`](scripts/privacy-check.mjs) gerçek bir Chromium'da Türkçe bir ekran görüntüsünü OCR ile okutur, sayfanın dışarıya **sıfır** istek attığını ve sayfa içinden dış sunucuya veri gönderme denemesinin CSP tarafından **engellendiğini** doğrular. CI'da `Gizlilik uçtan uca testi` adımı olarak çalışır.
+
 ## Teknik stack
 
 | Katman | Teknoloji | Sorumluluk |
@@ -117,9 +125,14 @@ npm test
 npm run typecheck
 npm run lint
 npm run build
+
+# Gizlilik uçtan uca testi (GitHub Pages çıktısı üzerinde, Chromium gerekir)
+GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/kalkan npx next build
+npx playwright install chromium
+npm run test:privacy
 ```
 
-CI aynı temel kontrolleri çalıştırarak analiz motorunda veya arayüzde yapılan değişikliklerin build ve test seviyesinde doğrulanmasını sağlar.
+CI aynı kontrolleri çalıştırarak analiz motorunda veya arayüzde yapılan değişikliklerin build ve test seviyesinde doğrulanmasını sağlar; ayrı bir iş olarak gizlilik uçtan uca testini de koşar.
 
 ## Yerel geliştirme
 
@@ -146,7 +159,7 @@ npm run build
 
 ## English
 
-**Kalkan** is a privacy-focused, browser-side scam and phishing risk analyzer for suspicious messages, URLs and screenshots. It uses deterministic rules instead of an LLM, performs Turkish OCR with Tesseract.js and explains which signals increased the risk score. Analysis content stays in the browser rather than being sent to an application backend.
+**Kalkan** is a privacy-focused, browser-side scam and phishing risk analyzer for suspicious messages, URLs and screenshots. It uses deterministic rules instead of an LLM, performs Turkish OCR with Tesseract.js and explains which signals increased the risk score. Analysis content stays in the browser rather than being sent to an application backend. This is enforced, not just promised: OCR assets are self-hosted, a `connect-src 'self'` Content Security Policy blocks requests to any other origin, and an end-to-end Playwright check in CI verifies that OCR works with zero third-party requests and that an exfiltration attempt is blocked.
 
 ## Lisans
 

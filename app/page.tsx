@@ -104,8 +104,13 @@ export default function Home() {
     setOcrStatus('Metin okuma hazırlanıyor…');
     try {
       const { createWorker } = await import('tesseract.js');
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+      // Worker, çekirdek ve dil verisi sitenin kendi kaynağından yüklenir (scripts/copy-tesseract.mjs);
+      // üçüncü taraf CDN kullanılmaz, CSP'deki 'self' kuralları bozulmaz.
       const worker = await createWorker('tur', 1, {
-        langPath: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/tessdata`,
+        workerPath: `${basePath}/tesseract/worker.min.js`,
+        corePath: `${basePath}/tesseract/core`,
+        langPath: `${basePath}/tessdata`,
         logger: (message) => {
           if (message.status === 'recognizing text') {
             setOcrStatus(`Metin okunuyor… %${Math.round((message.progress ?? 0) * 100)}`);

@@ -23,6 +23,31 @@ export const metadata: Metadata = {
   },
 };
 
+// GitHub Pages HTTP başlığı eklemeye izin vermediği için CSP sayfaya meta etiketiyle de eklenir.
+// connect-src 'self': yapıştırılan metin ve görseller sayfadan hiçbir dış sunucuya gönderilemez;
+// "veri cihazdan çıkmaz" vaadini tarayıcı zorunlu kılar. (frame-ancestors meta ile çalışmadığı için
+// yalnızca HTTP başlığında, next.config.ts içinde tanımlıdır.)
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data:",
+  "connect-src 'self'",
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="tr"><body>{children}</body></html>;
+  return (
+    <html lang="tr">
+      <head>
+        <meta httpEquiv="Content-Security-Policy" content={contentSecurityPolicy} />
+        <meta name="referrer" content="no-referrer" />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
 }

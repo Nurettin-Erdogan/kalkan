@@ -38,3 +38,6 @@ next-env.d.ts
 /outputs/
 /work/
 *.tar.gz
+
+# build sırasında node_modules içinden kopyalanan Tesseract dosyaları
+/public/tesseract/

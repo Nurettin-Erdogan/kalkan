@@ -35,3 +35,35 @@ jobs:
 
       - name: Üretim derlemesi
         run: npm run build
+
+  privacy:
+    name: Gizlilik uçtan uca testi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu al
+        uses: actions/checkout@v7
+
+      - name: Node.js kur
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Bağımlılıkları kur
+        run: npm ci
+
+      - name: Tesseract dosyalarını hazırla
+        run: node scripts/copy-tesseract.mjs
+
+      - name: GitHub Pages çıktısını oluştur
+        run: npx next build
+        env:
+          GITHUB_PAGES: "true"
+          NEXT_PUBLIC_BASE_PATH: /kalkan
+          NEXT_PUBLIC_SITE_URL: https://nurettin-erdogan.github.io
+
+      - name: Chromium kur
+        run: npx playwright install --with-deps chromium
+
+      - name: OCR cihazda çalışıyor, dış istek yok, CSP veri sızdırmayı engelliyor
+        run: npm run test:privacy
