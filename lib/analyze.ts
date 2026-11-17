@@ -14,12 +14,14 @@ export type Analysis = {
 
 const officialDomains = [
   'turkiye.gov.tr', 'gib.gov.tr', 'ptt.gov.tr', 'egm.gov.tr',
-  'akbank.com', 'garanti.com.tr', 'isbank.com.tr', 'yapikredi.com.tr',
+  'akbank.com', 'garanti.com.tr', 'garantibbva.com.tr', 'isbank.com.tr', 'yapikredi.com.tr',
   'ziraatbank.com.tr', 'halkbank.com.tr', 'vakifbank.com.tr', 'qnb.com.tr',
   'denizbank.com', 'teb.com.tr',
   'yurticikargo.com', 'araskargo.com.tr', 'mngkargo.com.tr', 'suratkargo.com.tr',
   'turkcell.com.tr', 'vodafone.com.tr', 'turktelekom.com.tr', 'ttnet.com.tr',
   'papara.com', 'ups.com', 'dhl.com',
+  'trendyol.com', 'hepsiburada.com', 'migros.com.tr', 'amazon.com.tr', 'getir.com',
+  'yemeksepeti.com', 'sahibinden.com', 'instagram.com', 'whatsapp.com',
 ];
 
 /** Brand tokens used for mimic + lookalike checks (normalized ASCII). */
@@ -29,7 +31,20 @@ const brandTokens = [
   'yurtici', 'aras', 'mng', 'surat', 'ups', 'dhl',
   'turkcell', 'vodafone', 'turktelekom', 'ttnet',
   'papara',
+  'trendyol', 'hepsiburada', 'migros', 'amazon', 'getir', 'yemeksepeti', 'sahibinden', 'instagram', 'whatsapp',
 ];
+
+const sensitiveSubject =
+  '(?:sifre|parola|\\bpin\\b|sms kodu|dogrulama kodu|onay kodu|guvenlik kodu|kart numarasi|cvv|son kullanma tarihi|tc kimlik|' +
+  '(?:kimlik|kart|hesap)(?: ve (?:kimlik|kart))? bilgi|[0-9]+ haneli (?:bir )?kod|gelen (?:sms |dogrulama )?kod|sana (?:bir )?kod)';
+const sensitiveAction =
+  '(?:paylasin|gonderin|girin|giriniz|yazin|iletin|soyleyin|bildirin|dogrulayin|dogrulamak|guncelleyin|onaylayin|tuslayin|basvurun|' +
+  '(?:paylas|gonder|ilet|soyle|yolla|at)(?:ir|ar|ebilir|abilir) misin)';
+const sensitiveRequest = new RegExp(`${sensitiveSubject}.{0,60}\\b${sensitiveAction}\\b`, 'i');
+// Gerçek tek kullanımlık şifre mesajları kodu içerir ve paylaşmamayı öğütler.
+const doNotShareWarning = /kimseyle paylasma|kimseye (?:vermey|soylemey|iletmey)|asla (?:sormaz|istemez)/i;
+// Kullanıcının kendi isteğiyle yapılan iptal/iade bir tehdit değildir.
+const userInitiated = /\b(?:talebiniz|isteginiz) (?:uzerine|dogrultusunda)\b|\btalebinizle\b/i;
 
 const shorteners = ['bit.ly', 'tinyurl.com', 't.co', 'cutt.ly', 'rb.gy', 'is.gd'];
 const suspiciousTlds = ['.xyz', '.top', '.click', '.buzz', '.shop', '.live', '.info', '.vip', '.online', '.icu', '.cfd'];
@@ -68,6 +83,8 @@ function extractLinks(value: string) {
 }
 
 function isOfficial(hostname: string) {
+  // .gov.tr altındaki alan adları yalnızca kamu kurumlarına tahsis edilir.
+  if (hostname.endsWith('.gov.tr')) return true;
   return officialDomains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
 }
 
@@ -133,22 +150,27 @@ export function analyzeContent(input: string): Analysis {
   if (/\b(hemen|acil(?:en)?|son (?:uyari|sans)|bugun (?:icinde|son)|dakika icinde|gecikmeden|simdi (?:tikla|onayla)|sure dolmadan)\b/i.test(searchable)) {
     add('Acele ettiren dil', 'Mesaj, düşünmeden işlem yapman için zaman baskısı kuruyor.', 14);
   }
-  if (/(?:sifre|parola|pin|sms kodu|dogrulama kodu|kart numarasi|cvv|guvenlik kodu|kimlik bilgisi|tc kimlik).{0,60}\b(?:paylasin|gonderin|girin|yazin|iletin|soyleyin|dogrulayin|dogrulamak)\b/i.test(searchable)) {
+  if (sensitiveRequest.test(searchable) && !doNotShareWarning.test(searchable)) {
     add('Hassas bilgi talebi', 'Şifre, kart veya doğrulama bilgisi isteyen mesajlar yüksek risk taşır.', 26, 'danger');
   }
-  if (/(?:\biban\b|\bhavale\b|\beft\b|\bkapora\b|\bkripto\b|\bpapara\b|\bpara (?:gonderin|yatirin|transfer edin)\b|\b(?:odeme|ucret|borc|tutar).{0,50}\b(?:odeyin|ode|yapiniz|yapin|tamamlayin|yatirin|gonderin)\b)/i.test(searchable)) {
+  if (/(?:\biban\b|\bhavale\b|\beft\b|\bkapora\b|\bkripto\b|\bpapara\b|\bpara (?:gonderin|yatirin|transfer edin)\b|\b(?:odeme|ucret|borc|tutar).{0,50}\b(?:odeyin|ode|yapiniz|yapin|tamamlayin|yatirin|gonderin)\b|\b(?:paranizi|birikiminizi)\b.{0,40}\b(?:aktar|gonder|yatir|transfer)|\bguvenli hesab)/i.test(searchable)) {
     add('Para gönderme talebi', 'Mesaj doğrudan ödeme veya para transferi istiyor.', 18, 'danger');
   }
-  if (/(?:\b(?:hesabiniz|kartiniz|hattiniz|paketiniz|kargonuz).{0,55}\b(?:kapan|askiya|bloke|iptal|iade|durdur)|\bicra\b|\bceza (?:uygulan|kesil)|\byasal islem\b|\bhakkinizda islem\b)/i.test(searchable)) {
+  if (
+    /(?:\b(?:hesabiniz|kartiniz|hattiniz|paketiniz|kargonuz).{0,55}\b(?:kapan|askiya|bloke|iptal|iade|durdur)|\bicra\b|\bceza (?:uygulan|kesil)|\byasal islem\b|\bhakkinizda islem\b)/i.test(searchable)
+    && !userInitiated.test(searchable)
+  ) {
     add('Tehdit veya kayıp korkusu', 'Hesap kapatma, ceza ya da yasal işlem korkusu kullanılıyor.', 18, 'danger');
   }
   if (/(odul kazand|cekilis|hediye kazand|bedava|ucretsiz iphone|miras|yuksek kazanc)/i.test(searchable)) {
     add('Gerçek olamayacak teklif', 'Beklenmeyen ödül veya aşırı kazanç vaadi dolandırıcılık işareti olabilir.', 17);
   }
-  if (/(anydesk|teamviewer|uzaktan baglanti|ekran paylas|uygulamayi indir)/i.test(searchable)) {
+  // Yalnızca uzaktan kontrol araçları: "uygulamayı indirin" diyen her kampanya
+  // cihazına erişim istemiyor.
+  if (/(anydesk|teamviewer|quicksupport|rustdesk|uzaktan baglanti|uzak masaustu|ekran paylas)/i.test(searchable)) {
     add('Uzaktan erişim isteği', 'Cihazına erişim sağlayan uygulama veya ekran paylaşımı isteniyor.', 32, 'danger');
   }
-  if (/(polis|savci|hakim|banka guvenlik|musteri hizmetleri|kargo sirketi).{0,80}(?:benim|bizim|adina|olarak)/i.test(searchable)) {
+  if (/(polis|savci|hakim|emniyet|jandarma|mahkeme|banka guvenlik|musteri hizmetleri|kargo sirketi).{0,80}(?:benim|bizim|adina|olarak)/i.test(searchable)) {
     add('Yetkili gibi davranma', 'Gönderen kendisini güvenilir bir kurum veya görevli gibi tanıtıyor.', 12);
   }
   if (
@@ -168,7 +190,10 @@ export function analyzeContent(input: string): Analysis {
       if (isOfficial(host)) {
         add('Resmî alan adı eşleşiyor', `${host} bilinen resmî alan adlarından biri. İçeriği yine de kontrol et.`, 0, 'positive');
       } else {
-        const mimicsBrand = brandTokens.some((brand) => {
+        // "gov" etiketi taşıyan ama .gov.tr olmayan alan adı kamu kurumu taklididir
+        // (ör. turkiye-gov-odeme.com).
+        const mimicsGovernment = host.split(/[.-]/).includes('gov');
+        const mimicsBrand = mimicsGovernment || brandTokens.some((brand) => {
           const needle = brand.replaceAll('-', '');
           return host.includes(needle) || normalizedLink.includes(`${needle}.`) || host.split(/[.-]/).includes(needle);
         });
@@ -196,6 +221,11 @@ export function analyzeContent(input: string): Analysis {
       if (host.split('.').length >= 5) add('Aşırı uzun alt alan adı', 'Gerçek alan adını fark etmeyi zorlaştıran çok sayıda alt alan kullanılmış.', 10);
     } catch {
       add('Bozuk veya gizlenmiş bağlantı', 'Bağlantı standart bir internet adresi olarak okunamadı.', 12);
+      // Geçersiz punycode bile olsa "xn--" taşıyan bağlantı, benzer görünen
+      // karakterlerle gerçek alan adını gizleme denemesidir.
+      if (/xn--/i.test(rawLink)) {
+        add('Gizlenmiş karakterler', 'Alan adı benzer görünen farklı alfabe karakterleri içeriyor olabilir.', 24, 'danger');
+      }
     }
   }
 
