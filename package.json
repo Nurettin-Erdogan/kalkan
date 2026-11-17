@@ -12,7 +12,8 @@
     "build": "vinext build",
     "start": "vinext start",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "test": "node --experimental-strip-types --test lib/analyze.test.ts",
+    "test": "node --experimental-strip-types --test lib/analyze.test.ts lib/evaluation.test.ts",
+    "evaluate": "node --experimental-strip-types scripts/evaluate.ts",
     "typecheck": "tsc --noEmit",
     "prebuild": "node scripts/copy-tesseract.mjs",
     "test:privacy": "node scripts/privacy-check.mjs out"

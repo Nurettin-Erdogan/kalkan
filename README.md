@@ -84,6 +84,30 @@ Bu projede amaç yalnızca bir risk etiketi üretmek değil, **sonucun neden olu
 
 Bu yaklaşım tüm dolandırıcılık türlerini yakalama garantisi vermez; ancak karar sürecini kullanıcı ve geliştirici açısından denetlenebilir tutar.
 
+## Ölçülebilir doğruluk
+
+Bir risk analizcisinin iki ayrı başarısızlık biçimi vardır: dolandırıcılığı kaçırmak ve meşru mesajı şüpheli saymak. İkincisi sanıldığından tehlikelidir; her şeyi şüpheli bulan bir araç kısa sürede görmezden gelinir. Kalkan bu yüzden etiketli bir değerlendirme setiyle ölçülür: 36 dolandırıcılık ve 36 meşru sentetik Türkçe mesaj ([lib/fixtures/evaluation-set.ts](lib/fixtures/evaluation-set.ts)). Meşru tarafta bilinçli olarak zor örnekler vardır: "son gün" diyen gerçek operatör kampanyası, "kodu uygulamaya girin, kimseyle paylaşmayın" diyen gerçek tek kullanımlık şifre, resmî alan adlı banka ve kargo bildirimleri.
+
+"Uyarı", orta veya yüksek risk demektir.
+
+| Bölüm | Yakalanan dolandırıcılık | Yüksek riskle yakalanan | Yanlış alarm (meşru mesaj) | Kesinlik |
+| --- | --- | --- | --- | --- |
+| Tümü | 32/36 (%88,9) | 3/36 (%8,3) | 1/36 (%2,8) | %97,0 |
+| Geliştirme yarısı | 18/18 (%100,0) | 2/18 (%11,1) | 0/18 (%0,0) | %100,0 |
+| Kör test yarısı | 14/18 (%77,8) | 1/18 (%5,6) | 1/18 (%5,6) | %93,3 |
+
+**Yöntem.** Set, numarası tek ve çift olan kayıtlarla ikiye bölünür. Kural iyileştirmeleri yalnızca geliştirme yarısındaki hatalara bakılarak yapıldı; kör test yarısı bu iyileştirmelerin hiç görülmemiş mesajlara ne kadar genellendiğini gösterir. Geliştirme yarısındaki %100 bu yüzden tek başına bir şey kanıtlamaz; dürüst sayı kör test satırıdır. İlk ölçümde kör test yarısında yakalama %61,1, yanlış alarm %16,7 idi. Düzeltilen kusurlar:
+
+- "kart bilgilerinizi girin" ve "6 haneli kodu iletebilir misin" kalıplarını kaçırma,
+- "güvenli hesap" tuzağı ve emniyet/savcılık taklidi,
+- geçersiz punycode bağlantıyı yalnızca "bozuk" sayma,
+- `gov` etiketi taşıyan ama `.gov.tr` olmayan alan adlarını tanımama,
+- "uygulamayı indirin" diyen her kampanyayı uzaktan erişim sanma,
+- gerçek tek kullanımlık şifreyi ve "talebiniz üzerine iptal" bildirimini tehdit sanma,
+- resmî listede eksik olan alan adları (ör. `garantibbva.com.tr`; gerçek Garanti bağlantıları "taklit" görünüyordu).
+
+Ayrıntılı kategori kırılımı ve kalan hatalar: [docs/evaluation.md](docs/evaluation.md). Rapor `npm run evaluate` ile üretilir. `npm test` hem raporun hem bu tablonun kural motorunun güncel çıktısıyla aynı olduğunu doğrular ve doğruluk mevcut seviyenin altına düşerse CI'ı durdurur.
+
 ## Gizlilik yaklaşımı
 
 Kalkan'ın temel tasarım kararı, analiz edilen içeriğin mümkün olduğunca cihazda kalmasıdır.
@@ -122,6 +146,7 @@ Yerelde kalite kontrolleri:
 
 ```bash
 npm test
+npm run evaluate   # değerlendirme setini çalıştırır, docs/evaluation.md raporunu yeniler
 npm run typecheck
 npm run lint
 npm run build
@@ -155,11 +180,13 @@ npm run build
 - Kural tabanlı analiz yeni veya alışılmadık dolandırıcılık kalıplarını kaçırabilir.
 - OCR doğruluğu ekran görüntüsünün çözünürlüğü, yazı tipi ve kontrastına bağlıdır.
 - Düşük risk puanı, içeriğin güvenli olduğuna dair garanti değildir.
+- Dolandırıcılıkların çoğu "orta" seviyede işaretlenir; değerlendirme setinde yalnızca 3/36'sı "yüksek" seviyeye çıkar. Uyarı eşiği orta seviyedir.
+- Değerlendirme seti küçük (72 mesaj) ve sentetiktir; ölçüm regresyonları yakalamak içindir, gerçek dünyadaki oranların kanıtı değildir. Gönderen bağlamı (tanıdık kişi, kayıtlı kurum) bilinmediği için arkadaştan gelen IBAN'lı mesaj gibi durumlar uyarı alabilir.
 - Kritik işlemlerde kullanıcı ilgili kurumun resmî web sitesi, uygulaması veya telefon numarası üzerinden bağımsız doğrulama yapmalıdır.
 
 ## English
 
-**Kalkan** is a privacy-focused, browser-side scam and phishing risk analyzer for suspicious messages, URLs and screenshots. It uses deterministic rules instead of an LLM, performs Turkish OCR with Tesseract.js and explains which signals increased the risk score. Analysis content stays in the browser rather than being sent to an application backend. This is enforced, not just promised: OCR assets are self-hosted, a `connect-src 'self'` Content Security Policy blocks requests to any other origin, and an end-to-end Playwright check in CI verifies that OCR works with zero third-party requests and that an exfiltration attempt is blocked.
+**Kalkan** is a privacy-focused, browser-side scam and phishing risk analyzer for suspicious messages, URLs and screenshots. It uses deterministic rules instead of an LLM, performs Turkish OCR with Tesseract.js and explains which signals increased the risk score. Analysis content stays in the browser rather than being sent to an application backend. This is enforced, not just promised: OCR assets are self-hosted, a `connect-src 'self'` Content Security Policy blocks requests to any other origin, and an end-to-end Playwright check in CI verifies that OCR works with zero third-party requests and that an exfiltration attempt is blocked. Accuracy is measured, not assumed: a labeled set of 36 scam and 36 legitimate Turkish messages (including hard negatives such as real one-time-password texts and operator campaigns that use urgent language) is split into a development half and a blind half. Rules were tuned only on development errors; on the blind half the detector catches 14/18 scams (up from 11/18) with 1/18 false alarms (down from 3/18). CI fails if accuracy regresses and verifies that the published numbers match the engine's current output.
 
 ## Lisans
 
