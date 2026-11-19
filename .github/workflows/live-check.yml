@@ -1,0 +1,38 @@
+name: Canlı demo kontrolü
+
+# GitHub Pages'teki canlı sürümü her sabah 06:10'da (TSİ, UTC+3) doğrular.
+# Zamanlanmış çalışma başarısız olursa GitHub e-posta bildirimi gönderir.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 3 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      BASE_URL: https://nurettin-erdogan.github.io/kalkan
+    steps:
+      - name: Ana sayfa yayında
+        run: |
+          html="$(curl -fsSL --retry 3 --retry-delay 10 "$BASE_URL/")"
+          echo "$html" | grep -q "<title>Kalkan — " \
+            || { echo "::error::Sayfa başlığı bulunamadı; yanlış ya da bozuk bir sürüm yayında olabilir."; exit 1; }
+          echo "✓ Ana sayfa ve başlık"
+          # Gizlilik vaadi: içerik güvenlik politikası analiz edilen metnin dışarı gönderilmesini engeller.
+          echo "$html" | grep -qi 'http-equiv="Content-Security-Policy"' \
+            || { echo "::error::Content-Security-Policy etiketi yayında değil."; exit 1; }
+          echo "✓ Content-Security-Policy"
+
+      - name: Çevrimdışı OCR dosyaları yayında
+        run: |
+          # OCR üçüncü taraf CDN'den değil, aynı kaynaktan yüklenir; bu dosyalar eksikse
+          # ekran görüntüsü analizi çalışmaz.
+          for path in tesseract/worker.min.js tessdata/tur.traineddata.gz; do
+            curl -fsS -o /dev/null --retry 3 --retry-delay 10 "$BASE_URL/$path"
+            echo "✓ $path"
+          done

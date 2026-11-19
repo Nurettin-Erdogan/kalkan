@@ -6,6 +6,8 @@
 
 <p align="center">
   <a href="https://github.com/Nurettin-Erdogan/kalkan/actions/workflows/ci.yml"><img src="https://github.com/Nurettin-Erdogan/kalkan/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI durumu"></a>
+  <a href="https://github.com/Nurettin-Erdogan/kalkan/actions/workflows/codeql.yml"><img src="https://github.com/Nurettin-Erdogan/kalkan/actions/workflows/codeql.yml/badge.svg?branch=main" alt="CodeQL"></a>
+  <a href="https://github.com/Nurettin-Erdogan/kalkan/actions/workflows/live-check.yml"><img src="https://github.com/Nurettin-Erdogan/kalkan/actions/workflows/live-check.yml/badge.svg?branch=main" alt="Canlı demo kontrolü"></a>
   <a href="https://nurettin-erdogan.github.io/kalkan/"><img src="https://img.shields.io/badge/live-GitHub%20Pages-0f766e.svg" alt="Canlı demo"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0f766e.svg" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/TypeScript-5.9-0f766e.svg" alt="TypeScript 5.9">
